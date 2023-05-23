@@ -37,10 +37,10 @@ public class BucketService {
     public String buscarBucket(String nomeDoBucket) {
         List<Bucket> listaDeBuckets = amazonS3.listBuckets();
         for (Bucket bucket : listaDeBuckets) {
-            if (bucket.getName().equals(nomeDoBucket))
-                System.out.println(nomeDoBucket);
-            else {
-               System.out.println("Não existe um bucket com este nome!");
+            if (bucket.getName().equals(nomeDoBucket)) {
+                return "Bucket: " + bucket.getName() + " Proprietário(a): " + bucket.getOwner() + " Data de criação: " + bucket.getCreationDate();
+            } else {
+                return ("Não existe um bucket com este nome!");
             }
         }
         return nomeDoBucket;
