@@ -3,8 +3,10 @@ package br.com.luara.files3.service;
 import br.com.luara.files3.config.AWSConfig;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -12,12 +14,9 @@ import java.nio.file.Paths;
 
 @Service
 public class ObjectService {
-    @Autowired
-    private static AWSConfig awsConfig;
+    static final AmazonS3 s3 = AWSConfig.crendenciaisS3();
 
-    static final AmazonS3 s3 = awsConfig.crendenciaisS3();
-
-    public static void listaDeObjetos(String nomeDoBucket) {
+    public void listaDeObjetos(String nomeDoBucket) {
         var resultado = s3.listObjectsV2(nomeDoBucket);
         var sumObjeto = resultado.getObjectSummaries();
 
@@ -26,15 +25,15 @@ public class ObjectService {
         }
     }
 
-    public static void uploadObjetoComMetadado(String nomeDoBucket, String caminhoDoArquivo, String titulo,
-                                               String descricao, String usuario, String descricaoUsuario) {
+    public void uploadObjetoComMetadado(String nomeDoBucket, String caminhoDoArquivo, String titulo,
+                                        String descricao, String usuario, String descricaoUsuario) {
         var nomeArquivo = Paths.get(caminhoDoArquivo).getFileName().toString();
 
         if (!verificacaoTipoArquivo(caminhoDoArquivo)) {
             try {
                 PutObjectRequest request = new PutObjectRequest(nomeDoBucket, nomeArquivo, new File(caminhoDoArquivo));
                 ObjectMetadata metadado = new ObjectMetadata();
-                metadado.setContentType("Imagem: "+caminhoDoArquivo.lastIndexOf(".") + 1);
+                metadado.setContentType("Imagem: " + caminhoDoArquivo.lastIndexOf(".") + 1);
                 metadado.addUserMetadata(usuario, descricaoUsuario);
                 metadado.addUserMetadata(titulo, descricao);
                 request.setMetadata(metadado);
@@ -47,7 +46,7 @@ public class ObjectService {
         } else System.out.println("Esse arquivo não é uma imagem!");
     }
 
-    public static boolean uploadObjeto(String nomeDoBucket, String caminhoDoArquivo) {
+    public boolean uploadObjeto(String nomeDoBucket, String caminhoDoArquivo) {
         caminhoDoArquivo = "C:\\" + caminhoDoArquivo;
         String nomeArquivo = Paths.get(caminhoDoArquivo).toString();
         if (!verificacaoTipoArquivo(caminhoDoArquivo)) {
@@ -55,7 +54,7 @@ public class ObjectService {
             return false;
         }
         try {
-           s3.putObject(nomeDoBucket, nomeArquivo, new File(caminhoDoArquivo));
+            s3.putObject(nomeDoBucket, nomeArquivo, new File(caminhoDoArquivo));
         } catch (AmazonS3Exception amazonS3Exception) {
             System.out.println(amazonS3Exception.getMessage());
         }
@@ -74,6 +73,5 @@ public class ObjectService {
         System.out.println("Você pode fazer upload desses tipos de arquivo: png, jpg e jpeg.");
         return false;
     }
-
 
 }
