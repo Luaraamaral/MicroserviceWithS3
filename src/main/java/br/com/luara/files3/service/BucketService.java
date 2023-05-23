@@ -14,9 +14,10 @@ import java.util.List;
 public class BucketService {
     @Autowired
     private static AWSConfig awsConfig;
+    static final AmazonS3 amazonS3 = awsConfig.crendenciaisS3();
 
     public Bucket criarBucket(String nomeDoBucket) {
-        final AmazonS3 amazonS3 = awsConfig.crendenciaisS3();
+
         Bucket novoBucket = null;
         boolean verificaSeExisteBucket = amazonS3.doesBucketExistV2(nomeDoBucket);
 
@@ -37,7 +38,6 @@ public class BucketService {
     }
 
     public static Bucket pegarBucket(String nomeDoBucket) {
-        final AmazonS3 amazonS3 = awsConfig.crendenciaisS3();
         List<Bucket> listaDeBuckets = amazonS3.listBuckets();
         for (Bucket buckets : listaDeBuckets) {
             System.out.println(buckets.getName().equals(nomeDoBucket));
@@ -46,7 +46,6 @@ public class BucketService {
     }
 
     public static void listarOsBuckets() {
-        final AmazonS3 amazonS3 = awsConfig.crendenciaisS3();
         List<Bucket> listaDeBuckets = amazonS3.listBuckets();
         for (Bucket buckets : listaDeBuckets)
             System.out.println(buckets.getName());
