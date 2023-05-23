@@ -34,12 +34,16 @@ public class BucketService {
 
     }
 
-    public Bucket pegarBucket(String nomeDoBucket) {
+    public String buscarBucket(String nomeDoBucket) {
         List<Bucket> listaDeBuckets = amazonS3.listBuckets();
-        for (Bucket buckets : listaDeBuckets) {
-            System.out.println(buckets.getName().equals(nomeDoBucket));
+        for (Bucket bucket : listaDeBuckets) {
+            if (bucket.getName().equals(nomeDoBucket))
+                System.out.println(nomeDoBucket);
+            else {
+               System.out.println("Não existe um bucket com este nome!");
+            }
         }
-        return null;
+        return nomeDoBucket;
     }
 
     public void listarOsBuckets() {
