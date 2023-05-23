@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class AWSConfig {
 
-    private static String accessKey = "xxxxxx";
-    private static String secretKey = "xxxxxx";
+    private static String accessKey = "AKIA25AX5FMLR7XEHAEX";
+    private static String secretKey = "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";
 
     @Bean
-    public static AmazonS3 crendenciaisS3() {
+    public static AmazonS3 s3() {
 
         BasicAWSCredentials credenciais = new BasicAWSCredentials(accessKey, secretKey);
 

@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public class BucketService {
-    static final AmazonS3 amazonS3 = AWSConfig.crendenciaisS3();
+    static final AmazonS3 amazonS3 = AWSConfig.s3();
 
     public Bucket criarBucket(String nomeDoBucket) {
 
@@ -52,7 +52,7 @@ public class BucketService {
             System.out.println(buckets.getName());
     }
 
-    private boolean verificarDono(Bucket bucket) {
+    public boolean verificarDono(Bucket bucket) {
         try {
             var dono = bucket.getOwner().getDisplayName();
             return Boolean.parseBoolean(dono);

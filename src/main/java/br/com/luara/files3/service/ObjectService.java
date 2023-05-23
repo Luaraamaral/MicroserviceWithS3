@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 
 @Service
 public class ObjectService {
-    static final AmazonS3 s3 = AWSConfig.crendenciaisS3();
+    static final AmazonS3 s3 = AWSConfig.s3();
 
     public void listaDeObjetos(String nomeDoBucket) {
         var resultado = s3.listObjectsV2(nomeDoBucket);
