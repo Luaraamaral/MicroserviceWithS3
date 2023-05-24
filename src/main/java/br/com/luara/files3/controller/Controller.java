@@ -7,13 +7,11 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.util.List;
@@ -21,12 +19,14 @@ import java.util.List;
 import static br.com.luara.files3.config.AWSConfig.s3;
 
 @RestController
+@CrossOrigin("*")
 public class Controller {
     @Autowired
     private BucketService bucketService;
     @Autowired
     private ObjectService objectService;
 
+    @Operation(summary = "Listar todos os buckets")
     @GetMapping(value = "/buckets")
     public ResponseEntity<?> listarBuckets() {
         try {
@@ -38,6 +38,7 @@ public class Controller {
 
     }
 
+    @Operation(summary = "Buscar um bucket pelo nome")
     @GetMapping(value = "/bucket/{nomeDoBucket}")
     public ResponseEntity<?> buscarBucketPeloNome(@PathVariable String nomeDoBucket) {
         try {
@@ -48,6 +49,7 @@ public class Controller {
         }
     }
 
+    @Operation(summary = "Listar todos os objetos do buckets")
     @GetMapping(value = "/objetos/{nomeDoBucket}")
     public ResponseEntity<?> listarObjetosDoBucket(@PathVariable String nomeDoBucket) {
         try {
@@ -62,18 +64,7 @@ public class Controller {
         }
     }
 
-    @PutMapping(value = "/upload/{nomeDoBucket}/{caminhoDoArquivo}")
-    public ResponseEntity<?> uploadImagem(@PathVariable String nomeDoBucket, @PathVariable String caminhoDoArquivo) {
-        try {
-            objectService.uploadObjeto(nomeDoBucket, caminhoDoArquivo);
-            var resposta = new File(caminhoDoArquivo).getName() + "\n" + nomeDoBucket;
-            return new ResponseEntity<>(resposta, HttpStatus.OK);
-
-        } catch (AmazonServiceException amazonServiceException) {
-            return new ResponseEntity<>(amazonServiceException.getErrorCode(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
+    @Operation(summary = "Criar um bucket")
     @PutMapping(value = "/criarBucket/{nomeDoBucket}")
     public ResponseEntity<?> criarUmBucket(@PathVariable String nomeDoBucket) {
         Bucket novoBucket = null;
@@ -93,6 +84,19 @@ public class Controller {
         } catch (AmazonServiceException amazonServiceException) {
             var mensagemDeErro = "Esse bucket já existe. " + amazonServiceException.getErrorMessage();
             return new ResponseEntity<>(mensagemDeErro, HttpStatus.METHOD_NOT_ALLOWED);
+        }
+    }
+
+    @Operation(summary = "Fazer upload de arquivo no bucket")
+    @PutMapping(value = "/upload/{nomeDoBucket}/{caminhoDoArquivo}")
+    public ResponseEntity<?> uploadArquivo(@PathVariable String nomeDoBucket, @PathVariable String caminhoDoArquivo) {
+        try {
+            objectService.uploadObjeto(nomeDoBucket, caminhoDoArquivo);
+            var resposta = new File(caminhoDoArquivo).getName() + "\n" + nomeDoBucket;
+            return new ResponseEntity<>(resposta, HttpStatus.OK);
+
+        } catch (AmazonServiceException amazonServiceException) {
+            return new ResponseEntity<>(amazonServiceException.getErrorCode(), HttpStatus.BAD_REQUEST);
         }
     }
 
