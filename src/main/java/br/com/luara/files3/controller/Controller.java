@@ -87,7 +87,7 @@ public class Controller {
         }
     }
 
-    @Operation(summary = "Fazer upload de arquivo no bucket")
+    @Operation(summary = "Fazer upload de arquivo no bucket - Informar se: png, jpg ou jpeg")
     @PutMapping(value = "/upload/{nomeDoBucket}/{caminhoDoArquivo}")
     public ResponseEntity<?> uploadArquivo(@PathVariable String nomeDoBucket, @PathVariable String caminhoDoArquivo) {
         try {
